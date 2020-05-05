@@ -3,7 +3,7 @@ title: JumpingJellyfish
 # tagline: a dark mode friendly Jekyll theme
 url: https://bj7.github.io
 paginate: 1
-baseurl: ""
+baseurl: "/blog"
 permalink: :title/
 
 kramdown:
