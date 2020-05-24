@@ -1,3 +1,9 @@
+---
+layout: post
+title: "Details Of Hello World in macOS Catalina"
+categories: [blog, C, assembly, macOS, gotchas]
+tags: []
+---
 # details_of_helloWorld
 # In depth look at details of C hello world in macOS Catalina
 
