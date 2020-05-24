@@ -1,5 +1,50 @@
 # details_of_helloWorld
-## In depth look at details of C hello world in macOS Catalina
+# In depth look at details of C hello world in macOS Catalina
+
+Our basic program (ignore the size and nmemb nonsense, I was just playing around):
+```C
+#include <stdio.h>
+int main() {
+    fwrite("Hello, world!\n", 128, 15, stdout);
+    return 0;
+}
+```
+Using `gcc -S hello.c -o hello.s` will give us
+```M
+	.section	__TEXT,__text,regular,pure_instructions
+	.build_version macos, 10, 15	sdk_version 10, 15, 4
+	.globl	_main                   ## -- Begin function main
+	.p2align	4, 0x90
+_main:                                  ## @main
+	.cfi_startproc
+## %bb.0:
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset %rbp, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register %rbp
+	subq	$16, %rsp
+	movq	___stdoutp@GOTPCREL(%rip), %rax
+	movl	$0, -4(%rbp)
+	movq	(%rax), %rcx
+	leaq	L_.str(%rip), %rdi
+	movl	$128, %esi
+	movl	$15, %edx
+	callq	_fwrite
+	xorl	%r8d, %r8d
+	movq	%rax, -16(%rbp)         ## 8-byte Spill
+	movl	%r8d, %eax
+	addq	$16, %rsp
+	popq	%rbp
+	retq
+	.cfi_endproc
+                                        ## -- End function
+	.section	__TEXT,__cstring,cstring_literals
+L_.str:                                 ## @.str
+	.asciz	"Hello, world!\n"
+
+.subsections_via_symbols
+```
 
 The first few lines are pretty basic. 
 ```
