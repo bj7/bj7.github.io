@@ -14,7 +14,7 @@ I got an email this morning saying our user-sharing system was broken. Every tim
 So I do some digging. The share icon iniates a bootstrap modal that contains sharing options. The html for the modal is retrieved via an ajax call to our server where PHP generates the desired html and returns it to be rendered via jQuery. After verifying that the PHP was operating correctly, and the modal did show, I started to try and determine why the actual share command failed. 
 
 The `onclick` event that triggered the `shareUserItem` function was present, as was the proper script tags containing the function definition. Now, the functions were appended to the `window` (not the best idea, but legacy systesm and all...)
-``` JS
+```
 window.shareUserItem = function() {.....}
 ```
 I figured maybe the `onclick` was improperly calling the share function, so I tested in the console if the window had the function. No, it didn't. So somehow the function definitions were not being placed on the window object. 
@@ -22,7 +22,7 @@ I figured maybe the `onclick` was improperly calling the share function, so I te
 Why would the window not have the function? Something was wrong with the processing of the script tags in this dynamic modal content, but what? 
 
 A quick solution would have been to run `eval` on all the scripts, like
-``` JS
+```
 eval($('#myscript').text());
 ```
 This would work, but `eval` is best used sparingly if at all, and I didn't want just another hack. So I continued to dig. My first thought was that perhaps it was some issue wit bootstrap 4 or our version of jQuery, since those had been more recently updated. I couldn't find any evidence of that. 
@@ -30,7 +30,7 @@ This would work, but `eval` is best used sparingly if at all, and I didn't want 
 So after a lot of googling, browsing StackOverflow, and general bewilderment at why it worked before, I came across a StackOverflow issue that was similar to what I was experiencing. 
 
 Somone was having an issue getting included scripts to parse when using jQuery's `append`. The modal I was working with didn't use `append`, but was created like
-```JS
+```
 var m = $(data).modal(
     {
         show: true
@@ -43,7 +43,7 @@ var m = $(data).modal(
 (emphasis mine)
 
 I figured that the code **should be** executing after using the constructor. I went to verify if the code would execute by switching to 
-```JS
+```
 var m = $("#shareModal").html(content).modal({
     show: true
 })
@@ -51,7 +51,7 @@ var m = $("#shareModal").html(content).modal({
 Boom! The scripts were being processed! 
 
 Why would `.html()` make the difference though? After another google search about jQuery constructors and script tags, I came across a StackOverflow answer explaining my exact situation. [The constructor can mess with script tags](https://stackoverflow.com/a/2699905). Another [answer](https://stackoverflow.com/a/19034133) right below explained about using `$.parseHTML` and making sure the `keepScripts` flag was true and then injecting using jquery. So that was the solution.
-```JS
+```
 var content = $($.parseHTML(data, null, true))
 var m = $("#shareModal").html(content).modal({
     show: true
