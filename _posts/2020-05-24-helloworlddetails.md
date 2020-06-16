@@ -8,7 +8,7 @@ tags: []
 # In depth look at details of C hello world in macOS Catalina
 
 Our basic program (ignore the size and nmemb nonsense, I was just playing around):
-```C
+```
 #include <stdio.h>
 int main() {
     fwrite("Hello, world!\n", 128, 15, stdout);
@@ -16,7 +16,7 @@ int main() {
 }
 ```
 Using `gcc -S hello.c -o hello.s` will give us
-```M
+```
 	.section	__TEXT,__text,regular,pure_instructions
 	.build_version macos, 10, 15	sdk_version 10, 15, 4
 	.globl	_main                   ## -- Begin function main
